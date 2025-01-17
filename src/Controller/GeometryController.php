@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Controller;
 
 use App\Model\Circle;
@@ -8,13 +9,20 @@ use App\Service\GeometryCalculator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api', name: 'api_')]
-class GeometryController extends AbstractController {
+class GeometryController extends AbstractController
+{
     private GeometryCalculator $calculator;
+    private SerializerInterface $serializer;
 
-    public function __construct(GeometryCalculator $calculator) {
+    public function __construct(
+        GeometryCalculator $calculator,
+        SerializerInterface $serializer
+    ) {
         $this->calculator = $calculator;
+        $this->serializer = $serializer;
     }
 
     #[Route('/circle/{radius}', name: 'circle', methods: ['GET'])]
@@ -57,15 +65,38 @@ class GeometryController extends AbstractController {
         ]);
     }
 
-    #[Route('/stats/{shapeType}', name: 'stats', methods: ['GET'])]
-    public function getStats(string $shapeType): JsonResponse {
-        $stats = $this->calculator->getShapeStatistics($shapeType);
-        return new JsonResponse($stats);
+    #[Route('/history', name: 'history', methods: ['GET'])]
+    public function getHistory(): JsonResponse
+    {
+        $history = $this->calculator->getRecentCalculations();
+        
+        // Convert to array before sending response
+        $normalizedHistory = array_map(function($calculation) {
+            return [
+                'id' => $calculation->getId(),
+                'shapeType' => $calculation->getShapeType(),
+                'parameters' => $calculation->getParameters(),
+                'surface' => $calculation->getSurface(),
+                'circumference' => $calculation->getCircumference(),
+                'calculatedAt' => $calculation->getCalculatedAt()->format('Y-m-d H:i:s')
+            ];
+        }, $history);
+        
+        return new JsonResponse($normalizedHistory);
     }
 
-    #[Route('/history', name: 'history', methods: ['GET'])]
-    public function getHistory(): JsonResponse {
-        $history = $this->calculator->getRecentCalculations();
-        return new JsonResponse($history);
+    #[Route('/stats/{shapeType}', name: 'stats', methods: ['GET'])]
+    public function getStats(string $shapeType): JsonResponse
+    {
+        $stats = $this->calculator->getShapeStatistics($shapeType);
+        
+        // Ensure numeric values are properly formatted
+        if ($stats) {
+            $stats = array_map(function($value) {
+                return is_numeric($value) ? (float)$value : $value;
+            }, $stats);
+        }
+        
+        return new JsonResponse($stats ?? ['message' => 'No statistics available']);
     }
 }

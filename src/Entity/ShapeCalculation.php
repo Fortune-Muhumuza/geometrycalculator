@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'shape_calculations')]
-class ShapeCalculation
+class ShapeCalculation implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,6 +36,19 @@ class ShapeCalculation
         $this->surface = $surface;
         $this->circumference = $circumference;
         $this->calculatedAt = new \DateTime();
+    }
+
+    // Implement JsonSerializable interface
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'shapeType' => $this->shapeType,
+            'parameters' => $this->parameters,
+            'surface' => $this->surface,
+            'circumference' => $this->circumference,
+            'calculatedAt' => $this->calculatedAt->format('Y-m-d H:i:s')
+        ];
     }
 
     // getters and setters
