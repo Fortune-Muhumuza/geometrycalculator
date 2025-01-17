@@ -1,37 +1,34 @@
-Geometry API Application
+# Geometry API Application
 
-Description
+## Description
 
 This application is a simple API built using the Symfony framework. It provides endpoints to calculate the surface area and circumference of geometric shapes, such as circles and triangles. The application also includes a reusable service to perform calculations involving multiple shapes.
 
-Features:
+## Features
 
-Circle Calculations: Calculate the surface area and circumference of a circle based on its radius.
+- **Circle Calculations**: Calculate the surface area and circumference of a circle based on its radius.
+- **Triangle Calculations**: Calculate the surface area and perimeter of a triangle based on the lengths of its sides.
+- **Reusable Service**: A service that can sum the surfaces and circumferences of multiple shapes.
+- **JSON Responses**: Provides results in a structured JSON format.
 
-Triangle Calculations: Calculate the surface area and perimeter of a triangle based on the lengths of its sides.
+---
 
-Reusable Service: A service that can sum the surfaces and circumferences of multiple shapes.
+## Installation
 
-JSON Responses: Provides results in a structured JSON format.
+### Prerequisites
 
-Installation
+- **PHP**: Version 8.1 or later
+- **Composer**
+- **Symfony CLI**
+- A web server like Apache or Nginx (optional for production)
 
-Prerequisites:
+### Steps
 
-PHP 8.1 or later
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
 
-Composer
-
-Symfony CLI
-
-A web server like Apache or Nginx (optional for production)
-
-Steps:
-
-Clone the repository:
-
-git clone <repository-url>
-cd <repository-folder>
 
 Install dependencies:
 
